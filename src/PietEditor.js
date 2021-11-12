@@ -31,26 +31,37 @@ export class PietEditor extends LitElement {
 
   constructor() {
     super();
-    this._currentColor = '#FFFFFF';
-    this._showGrid = true;
     this._resultImg = null;
   }
 
   _changeSelectedColor(e) {
-    this._currentColor = e.detail.color;
+    const board = this.renderRoot.querySelector('#board');
+    board.color = e.detail.color;
   }
 
   _toggleGrid(e) {
-    this._showGrid = e.detail.showGrid;
-
     const board = this.renderRoot.querySelector('#board');
-    board.showGrid = this._showGrid;
+    board.showGrid = e.detail.showGrid;
   }
 
   _generateResult() {
     const board = this.renderRoot.querySelector('#board');
-
     this._resultImg = board.dataUrl;
+  }
+
+  _updateCodelSize(e) {
+    const board = this.renderRoot.querySelector('#board');
+    board.codelSize = +e.detail.codelSize;
+  }
+
+  _updateGridWidth(e) {
+    const board = this.renderRoot.querySelector('#board');
+    board.width = +e.detail.width * board.codelSize;
+  }
+
+  _updateGridHeight(e) {
+    const board = this.renderRoot.querySelector('#board');
+    board.height = +e.detail.height * board.codelSize;
   }
 
   render() {
@@ -60,11 +71,13 @@ export class PietEditor extends LitElement {
         <div style="display: flex;">
           <piet-board
             id="board"
-            color="${this._currentColor}"
           >
           </piet-board>
           <piet-board-options
             @togglegrid="${this._toggleGrid}"
+            @updcodelsize="${this._updateCodelSize}"
+            @updwidth="${this._updateGridWidth}"
+            @updheight="${this._updateGridHeight}"
           >
           </piet-board-options>
         </div>

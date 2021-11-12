@@ -50,19 +50,8 @@ export class PietBoard extends LitElement {
         this.color = DEFAULT_COLOR;
     }
 
-    firstUpdated() {
-        this.canvas = this.renderRoot.querySelector('#board');
-        this.ctx = this.canvas.getContext('2d');
-
-        this.firstPaint();
-
-        this.canvas.addEventListener('mousedown', this.handleClick.bind(this));
-        // TODO: handle mousemove event to draw several pixels
-        // TODO: handle shift to quickly draw lines
-    }
-
-    firstPaint() {
-        this.ctx.fillStyle = this.color;
+    initBoard() {
+        this.ctx.fillStyle = '#FFFFFF';
         this.ctx.fillRect(0, 0, this.width, this.height);
 
         this.showGrid ? this.paintGrid() : null;
@@ -133,16 +122,31 @@ export class PietBoard extends LitElement {
                 this.hideGrid();
             }
         }
+
+        if (changedProperties.has('codelSize')) {
+            this.width = this.codelSize * 20;
+            this.height = this.codelSize * 20;
+        }
     }
 
-    disconnectedCallback() {
-        super.disconnectedCallback();
-        this.canvas.removeEventListener('mousedown', this.handleClick.bind(this));
+    updated(changedProperties) {
+        if (changedProperties.has('codelSize')
+        || changedProperties.has('width')
+        || changedProperties.has('height')) {
+            this.canvas = this.renderRoot.querySelector('#board');
+            this.ctx = this.canvas.getContext('2d');
+
+            this.initBoard();
+        }
     }
 
     render() {
         return html`
-            <canvas id="board" width="${this.width}" height="${this.height}">
+            <canvas id="board"
+                @mousedown="${this.handleClick}"
+                width="${this.width}"
+                height="${this.height}"
+            >
                 Your browser does not support canvas.
             </canvas>
         `;

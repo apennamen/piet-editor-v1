@@ -53,6 +53,9 @@ export class PietBoardOptions extends LitElement {
                 <label for="show-grid">Show Grid</label>
             </div>
             <br>
+            <p>
+               <strong>WARNING</strong><br> Following params reinit grid
+            </p>
             <label for="grid-width-input">Grid Width (codel)</label>
             <div>
                 <input id="grid-width-input" type="number" value="20"/>
