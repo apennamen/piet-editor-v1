@@ -8,7 +8,6 @@ export class PietBoardOptions extends LitElement {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-left: 2em;
           }
         `;
       }
@@ -48,6 +47,7 @@ export class PietBoardOptions extends LitElement {
 
     render() {
         return html`
+            <h2>Board Options</h2>
             <div>
                 <input id="show-grid" type="checkbox" @change="${this._toggleGrid}"/>
                 <label for="show-grid">Show Grid</label>

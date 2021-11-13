@@ -17,6 +17,15 @@ export class PietEditor extends LitElement {
         background-color: var(--piet-editor-background-color);
       }
 
+      #container {
+        display: flex;
+      }
+
+      #sider {
+        margin-left: 1em;
+        width: 350px;
+      }
+
       main {
         flex-grow: 1;
       }
@@ -68,23 +77,25 @@ export class PietEditor extends LitElement {
     return html`
       <main>
         <piet-action-bar @generate="${this._generateResult}"></piet-action-bar>
-        <div style="display: flex;">
+        <div id="container">
           <piet-board
             id="board"
           >
           </piet-board>
-          <piet-board-options
-            @togglegrid="${this._toggleGrid}"
-            @updcodelsize="${this._updateCodelSize}"
-            @updwidth="${this._updateGridWidth}"
-            @updheight="${this._updateGridHeight}"
-          >
-          </piet-board-options>
+          <div id="sider">
+            <piet-color-picker
+              @colorselected="${this._changeSelectedColor}"
+            >
+            </piet-color-picker>
+            <piet-board-options
+              @togglegrid="${this._toggleGrid}"
+              @updcodelsize="${this._updateCodelSize}"
+              @updwidth="${this._updateGridWidth}"
+              @updheight="${this._updateGridHeight}"
+            >
+            </piet-board-options>
+          </div>
         </div>
-        <piet-color-picker
-          @colorselected="${this._changeSelectedColor}"
-        >
-        </piet-color-picker>
         ${this._resultImg ? html`<img src="${this._resultImg}" />` : null}
       </main>
     `;
