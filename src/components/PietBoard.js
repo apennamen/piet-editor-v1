@@ -124,8 +124,13 @@ export class PietBoard extends LitElement {
         }
 
         if (changedProperties.has('codelSize')) {
-            this.width = this.codelSize * 20;
-            this.height = this.codelSize * 20;
+            const oldCodelSize = +changedProperties.get('codelSize');
+            if (!!oldCodelSize) {
+                const codelWidth = this.width / oldCodelSize;
+                const codelHeight = this.height / oldCodelSize;
+                this.width = this.codelSize * codelWidth;
+                this.height = this.codelSize * codelHeight;
+            }
         }
     }
 
