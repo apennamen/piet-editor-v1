@@ -97,6 +97,8 @@ export class PietEditor extends LitElement {
           </div>
         </div>
         ${this._resultImg ? html`<img src="${this._resultImg}" />` : null}
+
+        <piet-executor></piet-executor>
       </main>
     `;
   }
