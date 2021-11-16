@@ -45,12 +45,10 @@ export class PietEditor extends LitElement {
   static properties = {
     _currentColor: {state: true},
     _showGrid: {state: true},
-    _resultImg: {state: true},
   }
 
   constructor() {
     super();
-    this._resultImg = null;
   }
 
   _changeSelectedColor(e) {
@@ -65,13 +63,16 @@ export class PietEditor extends LitElement {
 
   _generateResult() {
     const board = this.renderRoot.querySelector('#board');
-    this._resultImg = board.dataUrl;
+    const programImg = this.renderRoot.querySelector('#program-img');
+    // hack to force execution even if data has not changed.
+    programImg.img = '';
+    programImg.img = board.dataUrl;
   }
 
   _executeProgram() {
-    const board = this.renderRoot.querySelector('#board');
-    this._resultImg = board.dataUrl;
+    this._generateResult();
 
+    const board = this.renderRoot.querySelector('#board');
     const executor = this.renderRoot.querySelector('#executor');
     // hack to force execution even if data has not changed.
     executor.data = '';
@@ -91,6 +92,11 @@ export class PietEditor extends LitElement {
   _updateGridHeight(e) {
     const board = this.renderRoot.querySelector('#board');
     board.height = +e.detail.height * board.codelSize;
+  }
+
+  _scrollToExecutor() {
+    const bottom = this.renderRoot.querySelector('#bottom');
+    bottom.scrollIntoView({ behavior: 'smooth'});
   }
 
   render() {
@@ -124,9 +130,10 @@ export class PietEditor extends LitElement {
         <hr/>
         <h1>Executor</h1>
         <div id="executor-container">
-          ${this._resultImg ? html`<img src="${this._resultImg}" />` : null}
+          <piet-program-img id="program-img" img="${this._resultImg}" @newimage="${this._scrollToExecutor}"></piet-program-img>
           <piet-executor id="executor"></piet-executor>
         </div>
+        <span id="bottom"></span>
         
       </main>
     `;
