@@ -56,6 +56,9 @@ export class PietEditor extends LitElement {
   _generateResult() {
     const board = this.renderRoot.querySelector('#board');
     this._resultImg = board.dataUrl;
+
+    const executor = this.renderRoot.querySelector('#executor');
+    executor.data = board.dataUrl;
   }
 
   _updateCodelSize(e) {
@@ -98,7 +101,7 @@ export class PietEditor extends LitElement {
         </div>
         ${this._resultImg ? html`<img src="${this._resultImg}" />` : null}
 
-        <piet-executor></piet-executor>
+        <piet-executor id="executor"></piet-executor>
       </main>
     `;
   }
