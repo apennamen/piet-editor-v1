@@ -29,12 +29,22 @@ export class PietBoard extends LitElement {
     }
 
     get dataUrl() {
-        if (!this.canvas) return null;
+        if (!this.canvas) return '';
 
         if (this.showGrid) {
             this.hideGrid();
         }
-        const result = this.canvas.toDataURL("image/png");
+        // We need to create a copy otherwise aliasing creep into PNG
+        const canvas = document.createElement("canvas");
+        canvas.width = this.canvas.width;
+        canvas.height = this.canvas.height;
+
+        const context = canvas.getContext('2d');
+        const imgData = this.cleanCanvas();
+        context.putImageData(imgData, 0, 0);
+
+        const result = canvas.toDataURL("image/png");
+
         if (this.showGrid) {
             this.paintGrid();
         }
@@ -48,6 +58,29 @@ export class PietBoard extends LitElement {
         this.codelSize = DEFAULT_CODEL_SIZE;
         this.showGrid = true;
         this.color = DEFAULT_COLOR;
+    }
+
+    /**
+     * Clean pixels of the displayed canvas
+     * @returns new imgData with no variations in pixel colors
+     */
+    cleanCanvas() {
+        const imgData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+        const data = imgData.data;
+        // Prevent aliasing
+        for(let i = 0; i <  data.length; i+=4) {
+            data[i] = this.normalizeColor(data[i]); // R
+            data[i+1] = this.normalizeColor(data[i+1]) // G
+            data[i+2] = this.normalizeColor(data[i+2]) // B
+            data[i+3] = 255; // A
+        }
+        return imgData;
+    }
+
+    normalizeColor(color) {
+        if (color < 100) return 0;
+        if (color > 230) return 255;
+        return 192;
     }
 
     initBoard() {

@@ -32,8 +32,6 @@ export class PietExecutor extends LitElement {
             const IMG = dataUrlToTypedArray(this.data);
             const FILE_PATH = '/pietprogram.png';
 
-            console.log(IMG[10]);
-
             // createModule comes from npiet.js import in index.html
             createModule({
                 preRun: [
