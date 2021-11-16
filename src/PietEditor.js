@@ -17,8 +17,13 @@ export class PietEditor extends LitElement {
         background-color: var(--piet-editor-background-color);
       }
 
-      #container {
+      #editor-container {
         display: flex;
+      }
+
+      #executor-container {
+        display: flex;
+        flex-direction: row;
       }
 
       #sider {
@@ -28,6 +33,11 @@ export class PietEditor extends LitElement {
 
       main {
         flex-grow: 1;
+      }
+
+      hr {
+        border: 0;
+        border-top: 1px dashed #1a2b42;
       }
     `;
   }
@@ -56,8 +66,15 @@ export class PietEditor extends LitElement {
   _generateResult() {
     const board = this.renderRoot.querySelector('#board');
     this._resultImg = board.dataUrl;
+  }
+
+  _executeProgram() {
+    const board = this.renderRoot.querySelector('#board');
+    this._resultImg = board.dataUrl;
 
     const executor = this.renderRoot.querySelector('#executor');
+    // hack to force execution even if data has not changed.
+    executor.data = '';
     executor.data = board.dataUrl;
   }
 
@@ -79,8 +96,13 @@ export class PietEditor extends LitElement {
   render() {
     return html`
       <main>
-        <piet-action-bar @generate="${this._generateResult}"></piet-action-bar>
-        <div id="container">
+        <h1>Editor</h1>
+        <piet-action-bar
+          @generate="${this._generateResult}"
+          @execute="${this._executeProgram}"
+          >
+        </piet-action-bar>
+        <div id="editor-container">
           <piet-board
             id="board"
           >
@@ -99,9 +121,13 @@ export class PietEditor extends LitElement {
             </piet-board-options>
           </div>
         </div>
-        ${this._resultImg ? html`<img src="${this._resultImg}" />` : null}
-
-        <piet-executor id="executor"></piet-executor>
+        <hr/>
+        <h1>Executor</h1>
+        <div id="executor-container">
+          ${this._resultImg ? html`<img src="${this._resultImg}" />` : null}
+          <piet-executor id="executor"></piet-executor>
+        </div>
+        
       </main>
     `;
   }
