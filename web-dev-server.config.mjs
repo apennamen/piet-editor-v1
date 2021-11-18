@@ -22,5 +22,9 @@ export default /** @type {import('@web/dev-server').DevServerConfig} */ ({
     // hmr && hmrPlugin({ exclude: ['**/*/node_modules/**/*'], presets: [presets.litElement] }),
   ],
 
+  mimeTypes: {
+    'wasm': 'application/wasm'
+  },
+
   // See documentation for all available options
 });

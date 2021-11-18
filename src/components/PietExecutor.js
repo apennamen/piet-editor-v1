@@ -32,23 +32,19 @@ export class PietExecutor extends LitElement {
             const IMG = dataUrlToTypedArray(this.data);
             const FILE_PATH = '/pietprogram.png';
 
-            // createModule comes from npiet.js import in index.html
-            createModule({
+            // npiet() comes from npiet.js import in index.html
+            npiet({
                 preRun: [
-                    function({FS}) {
-                        FS.writeFile(FILE_PATH, IMG, { flags: 'w+' });
-                    }
-                ],
-                postRun: [
-                    function({FS}) {
-                        FS.unlink(FILE_PATH);
-                        console.log(FS.stats(FILE_PATH));
+                    function({ FS }) {
+                        const stream = FS.open(FILE_PATH, 'w+');
+                        FS.write(stream, IMG, 0, IMG.length);
+                        FS.close(stream);
                     }
                 ],
                 locateFile: function(path, prefix) {
                     return `assets/${path}`;
                 },
-                arguments: ['-t', '-e', '50', '-cs', '30', FILE_PATH]
+                arguments: ['-e', '50', '-cs', '30', FILE_PATH]
             }).then(mod => {
                 console.log('done!');
             });
