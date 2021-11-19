@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit';
+import npiet from '../npiet/npiet-min-es6';
 
 /**
  * Converts Base64 URL to TypedArray of bytes reprensenting the PNG file
@@ -24,6 +25,21 @@ const typedArrayToDataUrl = (typedArray) => {
     return URL.createObjectURL(blob);
 }
 
+const readFile = (FS, path) => {
+    const stream = FS.open(path, 'r');
+    const { size } = FS.stat(path);
+    const buffer = new Uint8Array(size);
+
+    FS.read(stream, buffer, 0, size, 0);
+    FS.close(stream);
+
+    return buffer;
+}
+
+const writeFile = (FS, path) => {
+    
+}
+
 export class PietExecutor extends LitElement {
 
     static properties = {
@@ -42,7 +58,6 @@ export class PietExecutor extends LitElement {
             const IMG = dataUrlToTypedArray(this.data);
             const FILE_PATH = '/pietprogram.png';
 
-            // npiet() comes from npiet.js import in index.html
             npiet({
                 preRun: [
                     function({ FS }) {
@@ -51,13 +66,10 @@ export class PietExecutor extends LitElement {
                         FS.close(stream);
                     }
                 ],
-                locateFile: function(path, prefix) {
-                    return `assets/${path}`;
-                },
                 arguments: ['-e', '50', '-q', '-tpic', '-cs', '30', FILE_PATH]
             }).then(mod => {
                     const { FS } = mod;
-                    const tracePNG = FS.readFile('npiet-trace.png', {encoding: 'binary'});
+                    const tracePNG = readFile(FS, 'npiet-trace.png');
                     const traceURL = typedArrayToDataUrl(tracePNG);
 
                     const options = {bubbles: true, composed: true, detail: {traceURL}};
