@@ -31,11 +31,6 @@ export class PietEditor extends LitElement {
         width: 350px;
       }
 
-      #executor-container {
-        display: flex;
-        flex-direction: column;
-      }
-
       @media only screen and (max-width: 992px) {
         #editor-container {
           display: flex;
@@ -43,10 +38,16 @@ export class PietEditor extends LitElement {
           flex-wrap: wrap;
         }
 
+        #executor-container {
+          display: flex;
+          flex-direction: column;
+        }
+
         #sider {
           display: flex;
           flex-direction: row;
           justify-content: space-between;
+          padding-bottom: 1em; 
         }
       }
 
@@ -56,8 +57,27 @@ export class PietEditor extends LitElement {
         }
 
         #sider {
-          margin-left: 1em;
+          margin-right: 1em;
           min-width: 350px;
+        }
+
+        #executor-container {
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
+          width: 100%;
+        }
+
+        piet-executor {
+          grid-column: 1;
+        }
+
+        piet-program-img {
+          grid-column: 2 / 4;
+        }
+
+        piet-trace-img {
+          grid-column: 1 / 4;
+          padding: auto;
         }
       }
     `;
@@ -115,7 +135,7 @@ export class PietEditor extends LitElement {
 
   _scrollToProgramImg() {
     setTimeout(() => {
-      this.renderRoot.querySelector('#bottom')
+      this.renderRoot.querySelector('#program-img')
         .scrollIntoView({ behavior: 'smooth'});
     }, 100);
   }
@@ -133,23 +153,23 @@ export class PietEditor extends LitElement {
             <button @click="${this._generateResult}">Generate</button>
         </piet-action-bar>
         <div id="editor-container">
+          <div id="sider">
+              <piet-color-picker
+                @colorselected="${this._changeSelectedColor}"
+              >
+              </piet-color-picker>
+              <piet-board-options
+                @togglegrid="${this._toggleGrid}"
+                @updcodelsize="${this._updateCodelSize}"
+                @updwidth="${this._updateGridWidth}"
+                @updheight="${this._updateGridHeight}"
+              >
+              </piet-board-options>
+          </div>
           <piet-board
             id="board"
           >
           </piet-board>
-          <div id="sider">
-            <piet-color-picker
-              @colorselected="${this._changeSelectedColor}"
-            >
-            </piet-color-picker>
-            <piet-board-options
-              @togglegrid="${this._toggleGrid}"
-              @updcodelsize="${this._updateCodelSize}"
-              @updwidth="${this._updateGridWidth}"
-              @updheight="${this._updateGridHeight}"
-            >
-            </piet-board-options>
-          </div>
         </div>
         <hr/>
         <h1>Executor</h1>
@@ -157,9 +177,8 @@ export class PietEditor extends LitElement {
             <button @click="${this._executeProgram}">Execute</button>
         </piet-action-bar>
         <div id="executor-container">
-          <piet-program-img id="program-img" img="${this._resultImg}" @newimage="${this._scrollToProgramImg}"></piet-program-img>
-          <span id="bottom"></span>
           <piet-executor id="executor" @trace="${this._updateTraceImg}"></piet-executor>
+          <piet-program-img id="program-img" img="${this._resultImg}" @newimage="${this._scrollToProgramImg}"></piet-program-img>
           <piet-trace-img id="trace-img"></piet-trace-img>
         </div>
         

@@ -44,13 +44,17 @@ export class PietExecutor extends LitElement {
 
     static properties = {
         data: {attribute:false},
-        _trace: {state: true},
+        _arguments: {state: true},
     }
 
     constructor() {
         super();
         this.data = '';
-        this._trace = '';
+        this._arguments = ['-e', '50', '-q', '-tpic', '-cs', '30'];
+    }
+
+    firstUpdated() {
+        this.renderRoot.querySelector('#show-trace-img').checked = true;
     }
 
     updated(changedProperties) {
@@ -66,12 +70,16 @@ export class PietExecutor extends LitElement {
                         FS.close(stream);
                     }
                 ],
-                arguments: ['-e', '50', '-q', '-tpic', '-cs', '30', FILE_PATH]
-            }).then(mod => {
-                    const { FS } = mod;
-                    const tracePNG = readFile(FS, 'npiet-trace.png');
-                    const traceURL = typedArrayToDataUrl(tracePNG);
-
+                arguments: [...this._arguments, FILE_PATH],
+            }).then(Module => {
+                    const showTraceImg = this.renderRoot.querySelector('#show-trace-img').checked;
+                    let traceURL = '';
+                    if (showTraceImg) {
+                        const { FS } = Module;
+                        const tracePNG = readFile(FS, 'npiet-trace.png');
+                        traceURL = typedArrayToDataUrl(tracePNG);
+                    }
+                    
                     const options = {bubbles: true, composed: true, detail: {traceURL}};
                     const event = new CustomEvent('trace', options);
                     this.dispatchEvent(event);
@@ -79,11 +87,24 @@ export class PietExecutor extends LitElement {
         }
     }
 
+    _toggleTraceImg(e) {
+        if (e.target.checked) {
+            if(this._arguments.indexOf('-tpic') === -1) this._arguments.push('-tpic');
+        } else {
+            let index = this._arguments.indexOf('-tpic');
+            while (index >= 0) {
+                this._arguments.splice(index, 1);
+                index = this._arguments.indexOf('-tpic')
+            }
+        }
+    }
+
 
     render() {
         return html`
             <div>
-                <p>Parameters !</p>
+                <input type="checkbox" id="show-trace-img" @change="${this._toggleTraceImg}"/>
+                <label for="show-trace-img">Show Trace Image</label>
             </div>
         `
     }
