@@ -17,20 +17,6 @@ export class PietEditor extends LitElement {
         background-color: var(--piet-editor-background-color);
       }
 
-      #editor-container {
-        display: flex;
-      }
-
-      #executor-container {
-        display: flex;
-        flex-direction: column;
-      }
-
-      #sider {
-        margin-left: 1em;
-        width: 350px;
-      }
-
       main {
         flex-grow: 1;
       }
@@ -38,6 +24,41 @@ export class PietEditor extends LitElement {
       hr {
         border: 0;
         border-top: 1px dashed #1a2b42;
+      }
+      
+      piet-color-picker {
+        display: block;
+        width: 350px;
+      }
+
+      #executor-container {
+        display: flex;
+        flex-direction: column;
+      }
+
+      @media only screen and (max-width: 992px) {
+        #editor-container {
+          display: flex;
+          flex-direction: column;
+          flex-wrap: wrap;
+        }
+
+        #sider {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+        }
+      }
+
+      @media only screen and (min-width: 992px) {
+        #editor-container {
+          display: flex;
+        }
+
+        #sider {
+          margin-left: 1em;
+          min-width: 350px;
+        }
       }
     `;
   }
