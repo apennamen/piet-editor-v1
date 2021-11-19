@@ -16,6 +16,14 @@ const dataUrlToTypedArray = (dataUrl) => {
     return result;
 }
 
+/**
+ * Converts typedArray representing a PNG file to a Base64 URL
+ */
+const typedArrayToDataUrl = (typedArray) => {
+    const blob = new Blob([typedArray], {'type': 'image/png'});
+    return URL.createObjectURL(blob);
+}
+
 export class PietExecutor extends LitElement {
 
     static properties = {
@@ -49,9 +57,12 @@ export class PietExecutor extends LitElement {
                 arguments: ['-e', '50', '-q', '-tpic', '-cs', '30', FILE_PATH]
             }).then(mod => {
                     const { FS } = mod;
-                    const traceFile = FS.readFile('npiet-trace.png', {encoding: 'binary'});
-                    const blob = new Blob([traceFile], {'type': 'image/png'});
-                    this._trace = URL.createObjectURL(blob); 
+                    const tracePNG = FS.readFile('npiet-trace.png', {encoding: 'binary'});
+                    const traceURL = typedArrayToDataUrl(tracePNG);
+
+                    const options = {bubbles: true, composed: true, detail: {traceURL}};
+                    const event = new CustomEvent('trace', options);
+                    this.dispatchEvent(event);
             });
         }
     }
@@ -60,11 +71,7 @@ export class PietExecutor extends LitElement {
     render() {
         return html`
             <div>
-                ${
-                    !this._trace ?
-                        html`<span>See trace result here.</span>` :
-                        html`<img src="${this._trace}"/>`
-                }
+                <p>Parameters !</p>
             </div>
         `
     }

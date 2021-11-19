@@ -70,8 +70,6 @@ export class PietEditor extends LitElement {
   }
 
   _executeProgram() {
-    this._generateResult();
-
     const board = this.renderRoot.querySelector('#board');
     const executor = this.renderRoot.querySelector('#executor');
     // hack to force execution even if data has not changed.
@@ -94,19 +92,24 @@ export class PietEditor extends LitElement {
     board.height = +e.detail.height * board.codelSize;
   }
 
-  _scrollToExecutor() {
-    const executor = this.renderRoot.querySelector('#executor');
-    executor.scrollIntoView({ behavior: 'smooth'});
+  _scrollToProgramImg() {
+    setTimeout(() => {
+      this.renderRoot.querySelector('#bottom')
+        .scrollIntoView({ behavior: 'smooth'});
+    }, 100);
+  }
+
+  _updateTraceImg(e) {
+    const traceImg = this.renderRoot.querySelector('#trace-img');
+    traceImg.trace = e.detail.traceURL;
   }
 
   render() {
     return html`
       <main>
         <h1>Editor</h1>
-        <piet-action-bar
-          @generate="${this._generateResult}"
-          @execute="${this._executeProgram}"
-          >
+        <piet-action-bar>
+            <button @click="${this._generateResult}">Generate</button>
         </piet-action-bar>
         <div id="editor-container">
           <piet-board
@@ -129,9 +132,14 @@ export class PietEditor extends LitElement {
         </div>
         <hr/>
         <h1>Executor</h1>
+        <piet-action-bar>
+            <button @click="${this._executeProgram}">Execute</button>
+        </piet-action-bar>
         <div id="executor-container">
-          <piet-executor id="executor"></piet-executor>
-          <piet-program-img id="program-img" img="${this._resultImg}" @newimage="${this._scrollToExecutor}"></piet-program-img>
+          <piet-program-img id="program-img" img="${this._resultImg}" @newimage="${this._scrollToProgramImg}"></piet-program-img>
+          <span id="bottom"></span>
+          <piet-executor id="executor" @trace="${this._updateTraceImg}"></piet-executor>
+          <piet-trace-img id="trace-img"></piet-trace-img>
         </div>
         
       </main>
