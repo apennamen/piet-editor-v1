@@ -20,11 +20,13 @@ export class PietExecutor extends LitElement {
 
     static properties = {
         data: {attribute:false},
+        _trace: {state: true},
     }
 
     constructor() {
         super();
         this.data = '';
+        this._trace = '';
     }
 
     updated(changedProperties) {
@@ -44,9 +46,12 @@ export class PietExecutor extends LitElement {
                 locateFile: function(path, prefix) {
                     return `assets/${path}`;
                 },
-                arguments: ['-e', '50', '-cs', '30', FILE_PATH]
+                arguments: ['-e', '50', '-q', '-tpic', '-cs', '30', FILE_PATH]
             }).then(mod => {
-                console.log('done!');
+                    const { FS } = mod;
+                    const traceFile = FS.readFile('npiet-trace.png', {encoding: 'binary'});
+                    const blob = new Blob([traceFile], {'type': 'image/png'});
+                    this._trace = URL.createObjectURL(blob); 
             });
         }
     }
@@ -54,7 +59,13 @@ export class PietExecutor extends LitElement {
 
     render() {
         return html`
-            <div><span>I'm the executor.</span></div>
+            <div>
+                ${
+                    !this._trace ?
+                        html`<span>See trace result here.</span>` :
+                        html`<img src="${this._trace}"/>`
+                }
+            </div>
         `
     }
 }

@@ -23,7 +23,7 @@ export class PietEditor extends LitElement {
 
       #executor-container {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
       }
 
       #sider {
@@ -95,8 +95,8 @@ export class PietEditor extends LitElement {
   }
 
   _scrollToExecutor() {
-    const bottom = this.renderRoot.querySelector('#bottom');
-    bottom.scrollIntoView({ behavior: 'smooth'});
+    const executor = this.renderRoot.querySelector('#executor');
+    executor.scrollIntoView({ behavior: 'smooth'});
   }
 
   render() {
@@ -130,10 +130,9 @@ export class PietEditor extends LitElement {
         <hr/>
         <h1>Executor</h1>
         <div id="executor-container">
-          <piet-program-img id="program-img" img="${this._resultImg}" @newimage="${this._scrollToExecutor}"></piet-program-img>
           <piet-executor id="executor"></piet-executor>
+          <piet-program-img id="program-img" img="${this._resultImg}" @newimage="${this._scrollToExecutor}"></piet-program-img>
         </div>
-        <span id="bottom"></span>
         
       </main>
     `;
